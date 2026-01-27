@@ -8,6 +8,6 @@ namespace MzaEventos.Models
         [Required]
         [StringLength(100)]
         public string Nombre { get; set; }
-        public ICollection<Evento> Eventos { get; set; }
+        public ICollection<Evento>? Eventos { get; set; }
     }
 }

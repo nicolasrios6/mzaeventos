@@ -1,0 +1,102 @@
+﻿@model MzaEventos.Models.EventoCreateViewModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Evento</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Titulo" class="control-label"></label>
+                <input asp-for="Titulo" class="form-control" />
+                <span asp-validation-for="Titulo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <input asp-for="Descripcion" class="form-control" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaHora" class="control-label"></label>
+                <input asp-for="FechaHora" class="form-control" />
+                <span asp-validation-for="FechaHora" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Ubicacion" class="control-label"></label>
+                <input asp-for="Ubicacion" class="form-control" />
+                <span asp-validation-for="Ubicacion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoriaId" class="control-label"></label>
+                <select asp-for="CategoriaId" class="form-control" asp-items="ViewBag.CategoriaId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="LinkEntradas" class="control-label"></label>
+                <input asp-for="LinkEntradas" class="form-control" />
+                <span asp-validation-for="LinkEntradas" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="Imagen" class="form-label">Imágen del evento</label>
+                <input asp-for="Imagen" type="file" class="form-control" accept="image/*" onchange="previewImagen(event)" />
+                <span asp-validation-for="Imagen" class="text-danger"></span>
+
+                <div class="mt-3">
+                    <img id="imgPreview"
+                         src="#"
+                         alt="Preview"
+                         class="img-fluid rounded d-none"
+                         style="max-height: 250px;" />
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Create" class="btn btn-primary" />
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+        function previewImagen(event) {
+            const input = event.target;
+            const preview = document.getElementById('imgPreview');
+
+            if (!input.files || input.files.length === 0) {
+                preview.src = '#';
+                preview.classList.add('d-none');
+                return;
+            }
+
+            const file = input.files[0];
+
+            // Validación básica (opcional, UX)
+            if (!file.type.startsWith('image/')) {
+                preview.src = '#';
+                preview.classList.add('d-none');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+            };
+
+            reader.readAsDataURL(file);
+        }
+    </script>
+}
