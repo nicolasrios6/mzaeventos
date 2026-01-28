@@ -46,18 +46,7 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.LinkEntradas)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Destacado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Destacado)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Activo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Activo)
-        </dd>
+        
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FechaCreacion)
         </dt>
@@ -65,10 +54,13 @@
             @Html.DisplayFor(model => model.FechaCreacion)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UrlImagen)
+            Imágen
         </dt>
         <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UrlImagen)
+            <img src="/@Url.Content(Model.UrlImagen)"
+                 alt="Imagen del evento"
+                 class="img-fluid rounded"
+                 style="max-height: 300px;" />
         </dd>
     </dl>
 </div>

@@ -65,14 +65,14 @@ namespace MzaEventos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(EventoCreateViewModel evento)
+        public async Task<IActionResult> Create(EventoViewModel evento)
         {
             if (ModelState.IsValid)
             {
                 var userId = _userManager.GetUserId(User);
                 string? imagenUrl = null;
 
-                if(evento.Imagen != null)
+                if (evento.Imagen != null)
                 {
                     try
                     {
@@ -93,7 +93,8 @@ namespace MzaEventos.Controllers
                     Ubicacion = evento.Ubicacion,
                     CategoriaId = evento.CategoriaId,
                     LinkEntradas = evento.LinkEntradas,
-                    UrlImagen = evento.UrlImagen
+                    UrlImagen = imagenUrl,
+                    Activo = true
                 };
 
                 _context.Add(nuevoEvento);
@@ -107,18 +108,35 @@ namespace MzaEventos.Controllers
         // GET: Eventoes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
             var evento = await _context.Eventos.FindAsync(id);
             if (evento == null)
             {
                 return NotFound();
             }
+
             ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", evento.CategoriaId);
-            return View(evento);
+
+            var vm = new EventoViewModel
+            {
+                Id = evento.Id,
+                Titulo = evento.Titulo,
+                Descripcion = evento.Descripcion,
+                FechaHora = evento.FechaHora,
+                Ubicacion = evento.Ubicacion,
+                CategoriaId = evento.CategoriaId,
+                LinkEntradas = evento.LinkEntradas,
+                Activo = evento.Activo,
+                UrlImagen = evento.UrlImagen
+            };
+
+            return View(vm);
+
+            //if (evento == null)
+            //{
+            //    return NotFound();
+            //}
+            //ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", evento.CategoriaId);
+            //return View(evento);
         }
 
         // POST: Eventoes/Edit/5
@@ -126,23 +144,38 @@ namespace MzaEventos.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Titulo,Descripcion,FechaHora,Ubicacion,CategoriaId,LinkEntradas,Destacado,Activo,FechaCreacion,UrlImagen")] Evento evento)
+        public async Task<IActionResult> Edit(EventoViewModel vm)
         {
-            if (id != evento.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(evento);
+                    var evento = await _context.Eventos.FindAsync(vm.Id);
+                    if (evento == null) return NotFound();
+
+                    evento.Titulo = vm.Titulo;
+                    evento.Descripcion = vm.Descripcion;
+                    evento.FechaHora = vm.FechaHora;
+                    evento.Ubicacion = vm.Ubicacion;
+                    evento.CategoriaId = vm.CategoriaId;
+                    evento.LinkEntradas = vm.LinkEntradas;
+                    evento.Activo = vm.Activo;
+
+                    if (vm.Imagen != null)
+                    {
+                        await _imageStorage.DeleteAsync(evento.UrlImagen);
+
+                        var userId = _userManager.GetUserId(User);
+                        evento.UrlImagen = await _imageStorage.SaveAsync(userId, vm.Imagen);
+                    }
+
                     await _context.SaveChangesAsync();
+
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!EventoExists(evento.Id))
+                    if (!EventoExists(vm.Id))
                     {
                         return NotFound();
                     }
@@ -151,10 +184,9 @@ namespace MzaEventos.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoriaId"] = new SelectList(_context.Categorias, "Id", "Nombre", evento.CategoriaId);
-            return View(evento);
+            return RedirectToAction(nameof(Index));
+
         }
 
         // GET: Eventoes/Delete/5

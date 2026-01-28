@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MzaEventos.Data;
 
@@ -11,9 +12,11 @@ using MzaEventos.Data;
 namespace MzaEventos.Migrations
 {
     [DbContext(typeof(EventosDbContext))]
-    partial class EventosDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260128150728_ActivoTrue")]
+    partial class ActivoTrue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -181,7 +184,7 @@ namespace MzaEventos.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<bool>("Activo")
+                    b.Property<bool?>("Activo")
                         .HasColumnType("bit");
 
                     b.Property<int>("CategoriaId")
@@ -190,6 +193,9 @@ namespace MzaEventos.Migrations
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool?>("Destacado")
+                        .HasColumnType("bit");
 
                     b.Property<DateTime>("FechaCreacion")
                         .HasColumnType("datetime2");
